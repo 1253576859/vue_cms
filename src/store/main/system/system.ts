@@ -35,7 +35,7 @@ const useSystemStore = defineStore('system', {
     async deleteUserByIdAction (id: number) {
       // 1.删除数据的操作
       const deleteResult = await deleteUserById(id)
-      console.log(deleteResult,1111)
+      console.log(deleteResult)
 
       // 2.重新请求数据
       this.postUsersListAction({ offset: 0, size: 10 })
