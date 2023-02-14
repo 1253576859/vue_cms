@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import router from '@/router'
+import menu from '@/router/main/system/menu/menu'
 
 function loadRoutes () {
   const localRoutes: RouteRecordRaw[] = []
@@ -91,4 +92,25 @@ export function mapMenuListToIds (menuList: any[]) {
 
   recurseGetIds(menuList)
   return ids
+}
+
+/**
+ *从菜单映射到权限的按钮
+ * @param menuList 菜单列表
+ */
+export function mapMenuListToPermissions (menuList: any[]) {
+  const permissions: string[] = []
+
+  function recurseGetPermissions (menus: any[]) {
+    for (const item of menus) {
+      if (item.type === 3) {
+        permissions.push(item.permission)
+      } else {
+        recurseGetPermissions(item.children ?? [])
+      }
+    }
+  }
+
+  recurseGetPermissions(menuList)
+  return permissions
 }

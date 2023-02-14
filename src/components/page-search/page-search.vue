@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="search" v-if="isQuery">
     <!--输入搜索关键词的表单-->
     <el-form :model="searchForm" size="large" ref="formRef">
       <el-row :gutter="20">
@@ -34,9 +34,11 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import type { ElForm } from 'element-plus'
+import usePermissions from '@/hooks/usePermissons'
 
 // 自定义事件|接受的属性
 interface IProps {
+  pageName: string
   searchConfig: {
     formItems: any[]
   }
@@ -44,6 +46,9 @@ interface IProps {
 
 const emit = defineEmits(['queryClick', 'resetClick'])
 const props = defineProps<IProps>()
+
+const isQuery = usePermissions(`${ props.pageName }:query`)
+console.log(isQuery)
 
 // 定义form的数据
 const initialForm: any = {}

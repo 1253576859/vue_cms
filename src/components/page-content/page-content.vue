@@ -2,7 +2,7 @@
   <div class="content">
     <div class="header">
       <h3 class="title">{{ contentConfig?.header?.title ?? '数据列表' }}</h3>
-      <el-button type="primary" @click="handleNewUserClick">{{
+      <el-button type="primary" v-if="isCreate" @click="handleNewUserClick">{{
           contentConfig?.header?.btnTitle ?? '新建数据'
         }}
       </el-button>
@@ -19,11 +19,21 @@
             </el-table-column>
           </template>
           <template v-else-if="item.type === 'handler'">
-            <el-table-column align="center" v-bind="item">
+            <el-table-column v-if="isUpdate && isDelete" align="center" v-bind="item">
               <template #default="scope">
-                <el-button size="small" icon="Edit" text type="primary" @click="handleEditBtnClick(scope.row)">编辑
+                <el-button size="small"
+                           v-if="isUpdate"
+                           icon="Edit"
+                           text
+                           type="primary"
+                           @click="handleEditBtnClick(scope.row)">编辑
                 </el-button>
-                <el-button size="small" icon="Delete" text type="danger" @click="handleDeleteBtnClick(scope.row.id)">删除
+                <el-button size="small"
+                           v-if="isDelete"
+                           icon="Delete"
+                           text
+                           type="danger"
+                           @click="handleDeleteBtnClick(scope.row.id)">删除
                 </el-button>
               </template>
             </el-table-column>
@@ -55,6 +65,8 @@ import { storeToRefs } from 'pinia'
 import useSystemStore from '@/store/main/system/system'
 import { formatUTC } from '@/utils/format'
 import { ref } from 'vue'
+import useLoginStore from '@/store/login/login'
+import usePermissions from '@/hooks/usePermissons'
 
 
 interface IProps {
@@ -73,6 +85,14 @@ const props = defineProps<IProps>()
 // 新建用户的自定义事件
 const emit = defineEmits(['newClick', 'editClick'])
 
+// 获取是否有对应的增删查改的权限
+const loginStore = useLoginStore()
+const { permissions } = loginStore
+
+let isCreate = usePermissions(`${ props.contentConfig.pageName }:create`)
+let isDelete = usePermissions(`${ props.contentConfig.pageName }:delete`)
+let isUpdate = usePermissions(`${ props.contentConfig.pageName }:update`)
+let isQuery = usePermissions(`${ props.contentConfig.pageName }:query`)
 // 1.发起请求，获取usersList的数据 //页码相关的逻辑
 const currentPage = ref<number>(1)
 const pageSize = ref(10)
@@ -92,6 +112,7 @@ function handleCurrentChange () {
 
 // 4.定义函数，发送请求
 function fetchPageListData (formData: any = {}) {
+  if (!isQuery) return
   // 1.获取offset和size
   const size = pageSize.value
   const offset = (currentPage.value - 1) * size
@@ -99,6 +120,7 @@ function fetchPageListData (formData: any = {}) {
   // 2.发送网络请求
   const queryInfo = { ...info, ...formData }
   systemStore.postPageListAction(props.contentConfig.pageName, queryInfo)
+  
 }
 
 // 5.删除的操作
