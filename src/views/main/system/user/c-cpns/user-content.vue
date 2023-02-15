@@ -2,7 +2,7 @@
   <div class="content">
     <div class="header">
       <h3 class="title">用户列表</h3>
-      <el-button type="primary" @click="handleNewUserClick">新建用户</el-button>
+      <el-button type="primary" @click="handleNewUserClick" v-if="isCreate">新建用户</el-button>
     </div>
     <div class="table">
       <el-table :data="usersList" border style="width: 100%">
@@ -29,11 +29,13 @@
             {{ formatUTC(scope.row.updateAt) }}
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" width="180px">
+        <el-table-column v-if="isUpdate && isDelete" align="center" label="操作" width="180px">
           <template #default="scope">
-            <el-button size="small" icon="Edit" text type="primary" @click="handleEditBtnClick(scope.row)">编辑
+            <el-button size="small" v-if="isUpdate" icon="Edit" text type="primary"
+                       @click="handleEditBtnClick(scope.row)">编辑
             </el-button>
-            <el-button size="small" icon="Delete" text type="danger" @click="handleDeleteBtnClick(scope.row.id)">删除
+            <el-button size="small" v-if="isDelete" icon="Delete" text type="danger"
+                       @click="handleDeleteBtnClick(scope.row.id)">删除
             </el-button>
           </template>
         </el-table-column>
@@ -58,6 +60,7 @@ import { storeToRefs } from 'pinia'
 import useSystemStore from '@/store/main/system/system'
 import { formatUTC } from '@/utils/format'
 import { ref } from 'vue'
+import usePermissons from '@/hooks/usePermissons'
 
 // 新建用户的自定义事件
 const emit = defineEmits(['newClick', 'editClick'])
@@ -67,6 +70,11 @@ const currentPage = ref<number>(1)
 const pageSize = ref(10)
 const systemStore = useSystemStore()
 fetchUserListData()
+
+const isCreate = usePermissons('users:create')
+const isUpdate = usePermissons('users:update')
+const isDelete = usePermissons('users:update')
+
 
 // 2.获取usersLsit，进行展示
 const { usersList, usersTotalCount } = storeToRefs(systemStore)

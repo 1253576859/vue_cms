@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="search" v-if="isQuery">
     <!--输入搜索关键词的表单-->
     <el-form :model="searchForm" size="large" ref="formRef">
       <el-row :gutter="20">
@@ -52,6 +52,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import type { ElForm } from 'element-plus'
+import usePermissons from '@/hooks/usePermissons'
 
 // 自定义事件
 const emit = defineEmits(['queryClick', 'resetClick'])
@@ -65,6 +66,7 @@ const searchForm = reactive({
   createAt: ''
 })
 const formRef = ref<InstanceType<typeof ElForm>>()
+const isQuery = usePermissons('users:query')
 
 // 重置按钮
 function handleResetClick () {

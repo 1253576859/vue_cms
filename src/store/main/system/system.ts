@@ -7,6 +7,7 @@ import {
   postPageListData,
   deletePageById, newPageData, editPageData
 } from '@/service/main/system/system'
+import useMainStore from '@/store/main/main'
 
 interface ISystemStste {
   usersList: any[]
@@ -46,6 +47,9 @@ const useSystemStore = defineStore('system', {
       console.log(newResult)
       // 重新请求数据
       this.postUsersListAction({ offset: 0, size: 10 })
+      // 重新获取数据
+      const mainStore = useMainStore()
+      mainStore.fetchEntireData()
     },
     async editUserDataAction (id: number, userInfo: any) {
       // 1.更新用户数据
@@ -54,6 +58,9 @@ const useSystemStore = defineStore('system', {
 
       // 2.重新请求数据
       this.postUsersListAction({ offset: 0, size: 10 })
+      // 重新获取数据
+      const mainStore = useMainStore()
+      mainStore.fetchEntireData()
     },
     //   针对页面的数据，进行增删改查
     async postPageListAction (pageName: string, queryInfo: any) {
@@ -76,12 +83,18 @@ const useSystemStore = defineStore('system', {
 
       // 重新请求数据
       this.postPageListAction(pageName, { offset: 0, size: 10 })
+      // 重新获取数据
+      const mainStore = useMainStore()
+      mainStore.fetchEntireData()
     },
     async editPageDataAction (pageName: string, id: number, pageInfo: any) {
       const editResult = await editPageData(pageName, id, pageInfo)
 
       // 重新请求数据
       this.postPageListAction(pageName, { offset: 0, size: 10 })
+      // 重新获取数据
+      const mainStore = useMainStore()
+      mainStore.fetchEntireData()
     }
   }
 })

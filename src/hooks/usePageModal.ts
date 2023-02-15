@@ -1,15 +1,16 @@
 import { ref } from 'vue'
 import type PageModal from '@/components/page-modal/page-modal.vue'
 
-type editCallback = (data: any) => void
+type callbackType = (data?: any) => void
 
-function usePageModal (editCallback?: editCallback) {
+function usePageModal (newCallback: callbackType, editCallback?: callbackType) {
   const modalRef = ref<InstanceType<typeof PageModal>>()
 
   // 新建的操作
   function handleNewClick () {
     // @ts-ignore：
     modalRef.value?.setModalVisible()
+    if (newCallback) newCallback()
   }
 
 // 编辑的操作

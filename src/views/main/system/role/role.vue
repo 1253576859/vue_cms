@@ -48,7 +48,7 @@ import usePageModal from '@/hooks/usePageModal'
 import usePageContent from '@/hooks/usePageContent'
 
 // 逻辑管理
-const { modalRef, handleNewClick, handleEditClick } = usePageModal(editCallback)
+const { modalRef, handleNewClick, handleEditClick } = usePageModal(newCallback, editCallback)
 const { contentRef, handleQueryClick, handleResetClick } = usePageContent()
 
 // 获取完整的菜单
@@ -59,12 +59,16 @@ const treeRef = ref<InstanceType<typeof ElTree>>()
 
 function handlerElTreeCheck (data1: any, data2: any) {
   const menuList = [...data2.checkedKeys, ...data2.halfCheckedKeys]
-  console.log(menuList)
   otherInfo.value = { menuList }
 }
 
+function newCallback () {
+  nextTick(() => {
+    treeRef.value?.setCheckedKeys([])
+  })
+}
+
 function editCallback (itemData: any) {
-  console.log(itemData, itemData.menuList)
   nextTick(() => {
     const menuIds = mapMenuListToIds(itemData.menuList)
     treeRef.value?.setCheckedKeys(menuIds)

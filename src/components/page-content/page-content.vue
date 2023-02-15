@@ -97,6 +97,17 @@ let isQuery = usePermissions(`${ props.contentConfig.pageName }:query`)
 const currentPage = ref<number>(1)
 const pageSize = ref(10)
 const systemStore = useSystemStore()
+
+// 监听system中的action的执行
+systemStore.$onAction(({ name, after }) => {
+  // after:进入之后执行的回调
+  after(() => {
+    if (name === 'postPageListAction' || name === 'deletePageByIdAction' || name === 'editPageDataAction') {
+      currentPage.value = 1
+    }
+  })
+})
+
 fetchPageListData()
 
 // 2.获取usersLsit，进行展示

@@ -38,8 +38,9 @@ import usePermissions from '@/hooks/usePermissons'
 
 // 自定义事件|接受的属性
 interface IProps {
-  pageName: string
   searchConfig: {
+    pageName: string
+    labelWidth?: string
     formItems: any[]
   }
 }
@@ -47,8 +48,7 @@ interface IProps {
 const emit = defineEmits(['queryClick', 'resetClick'])
 const props = defineProps<IProps>()
 
-const isQuery = usePermissions(`${ props.pageName }:query`)
-console.log(isQuery)
+const isQuery = usePermissions(`${ props.searchConfig.pageName }:query`)
 
 // 定义form的数据
 const initialForm: any = {}
